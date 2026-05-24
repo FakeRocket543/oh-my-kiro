@@ -153,9 +153,13 @@ Stage C (deepseek): code bugs + edge cases
 
 2. **Execute story-by-story.** For each story:
    - Use Ultrawork mode for the implementation
-   - After implementation, **verify ALL acceptance criteria** by running tests/builds
-   - Mark story complete only when verification passes
-   - If verification fails: fix and re-verify (do NOT move on)
+   - **GATE before marking complete** (all must pass):
+     - [ ] Acceptance criteria met
+     - [ ] Build passes
+     - [ ] Relevant tests pass
+     - [ ] No regressions in existing tests
+   - Gate failure → fix and re-verify (do NOT move on)
+   - Gate pass → mark story complete, proceed to next
 
 3. **Never stop until:**
    - All stories are marked complete, OR
