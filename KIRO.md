@@ -361,12 +361,8 @@ When merging new concepts from upstream frameworks:
 4. Adapt to Kiro primitives — don't copy patterns that require hooks/plugins we don't have
 5. Test the behavior by asking the agent to demonstrate the mode
 
-**Reference repos (local):**
-```
-~/projets/omkc/omc/          # oh-my-claudecode
-~/projets/omkc/omcodex/      # TechDufus oh-my-claude
-~/projets/omkc/superclaude/  # SuperClaude Framework
-~/projets/omkc/omoc/         # oh-my-opencode
-~/projets/omh/witt3rd-omh/   # oh-my-hermes (witt3rd)
-~/projets/omh/salomondiei-omh/ # oh-my-hermes (salomondiei)
-```
+**Reference repos (all MIT):**
+- [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)
+- [oh-my-claude](https://github.com/TechDufus/oh-my-claude)
+- [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework)
+- [oh-my-hermes](https://github.com/witt3rd/oh-my-hermes)
