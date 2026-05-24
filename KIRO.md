@@ -120,10 +120,13 @@ Stage C (deepseek): code bugs + edge cases
 | File read + summarize | haiku-4.5 | 0.40x | Comprehension only |
 | Boilerplate generation | qwen3-coder-next | 0.05x | Template work |
 | Standard implementation | sonnet-4.6 | 1.30x | Balance quality/cost |
-| Chinese proofreading | glm-5 | 0.50x | Native zh understanding |
-| Code review | deepseek-3.2 | 0.25x | Good at finding bugs |
-| Architecture decision | opus-4.6 | 2.20x | Complex reasoning |
+| Chinese proofreading | glm-5 | 0.50x | Native zh + frontier reasoning |
+| Code review + bug finding | glm-5 | 0.50x | SWE-bench #1 tier at 1/4 Opus cost |
+| Agentic multi-step tasks | glm-5 | 0.50x | Specifically tuned for tool-calling workflows |
+| Long-context analysis | glm-5 | 0.50x | 200K context, can ingest full codebases |
+| Architecture decision | opus-4.6 | 2.20x | Complex judgment calls |
 | Multi-file refactor | sonnet-4.6 | 1.30x | One subagent per file |
+| Cheap code generation | deepseek-3.2 | 0.25x | Good enough for scaffolding |
 
 ---
 
