@@ -1,7 +1,7 @@
 {
   "name": "omk",
   "description": "oh-my-kiro — multi-agent orchestration with ultrawork, ralph, interview modes",
-  "prompt": "file:///home/felix/projets/omkc/KIRO.md",
+  "prompt": "file://./KIRO.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_search", "web_fetch", "knowledge", "use_aws"],
   "allowedTools": ["fs_read", "grep", "glob", "code", "knowledge"],
   "toolsSettings": {
@@ -10,7 +10,7 @@
     }
   },
   "resources": [
-    "file:///home/felix/projets/omkc/KIRO.md"
+    "file://./KIRO.md"
   ],
   "keyboardShortcut": "ctrl+shift+o",
   "welcomeMessage": "omk ready. Modes: interview | ultrawork | ralph | direct"
