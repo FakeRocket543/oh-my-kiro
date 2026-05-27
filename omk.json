@@ -1,17 +1,12 @@
 {
   "name": "omk",
-  "description": "oh-my-kiro — multi-agent orchestration with ultrawork, ralph, interview modes",
+  "description": "oh-my-kiro — interview, ralph, and coding discipline for Kiro CLI",
   "prompt": "file://./KIRO.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_search", "web_fetch", "knowledge", "use_aws"],
   "allowedTools": ["fs_read", "grep", "glob", "code", "knowledge"],
-  "toolsSettings": {
-    "crew": {
-      "availableAgents": ["kiro_default", "kiro_planner", "kiro_guide", "omk"]
-    }
-  },
   "resources": [
     "file://./KIRO.md"
   ],
   "keyboardShortcut": "ctrl+shift+o",
-  "welcomeMessage": "omk ready. Modes: interview | ultrawork | ralph | direct"
+  "welcomeMessage": "omk ready. Modes: interview | ralph | direct"
 }
