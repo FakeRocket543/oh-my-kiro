@@ -43,11 +43,9 @@ be reviewer         → Code review persona
 
 ```
 oh-my-kiro/
-├── KIRO.md          # Behavioral prompt (the brain)
-├── omk.json         # Kiro agent config
-├── LICENSE          # MIT
-└── docs/
-    └── aspirational.md  # Features pending platform support
+├── KIRO.md      # Behavioral prompt (the brain)
+├── omk.json     # Kiro agent config
+└── LICENSE      # MIT
 ```
 
 ## Attribution
