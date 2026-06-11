@@ -1,11 +1,11 @@
 {
   "name": "omk",
   "description": "oh-my-kiro — interview, ralph, confidence check, and coding discipline for Kiro CLI",
-  "prompt": "file://./KIRO.md",
+  "prompt": "file:///home/felix/.kiro/KIRO.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_search", "web_fetch", "knowledge", "use_aws", "subagent"],
   "allowedTools": ["fs_read", "grep", "glob", "code", "knowledge", "subagent"],
   "resources": [
-    "file://./KIRO.md"
+    "file:///home/felix/.kiro/KIRO.md"
   ],
   "keyboardShortcut": "ctrl+shift+o",
   "welcomeMessage": "omk ready. Modes: interview | ralph | direct. Personas: architect | tester | reviewer | implementer"
