@@ -3,7 +3,7 @@
   "description": "oh-my-kiro — interview, ralph, confidence check, and coding discipline for Kiro CLI",
   "prompt": "file://./KIRO.md",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_search", "web_fetch", "knowledge", "use_aws", "subagent"],
-  "allowedTools": ["fs_read", "grep", "glob", "code", "knowledge", "subagent"],
+  "allowedTools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_search", "web_fetch", "knowledge", "use_aws", "subagent"],
   "resources": [
     "file://./KIRO.md"
   ],
