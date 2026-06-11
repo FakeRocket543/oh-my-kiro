@@ -1,12 +1,12 @@
 # KIRO.md — oh-my-kiro behavioral layer
 
-> Behavioral tuning for Kiro CLI. Only contains patterns that **actually execute**
-> on the current platform. Aspirational multi-agent features are in `docs/aspirational.md`.
+> Behavioral tuning for Kiro CLI. Only patterns that **actually execute** on the current platform.
 >
 > **Sources & Attribution (all MIT licensed):**
+> - [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework) — confidence check, personas, wave execution
 > - [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) — ralph, interview, skills
 > - [oh-my-claude](https://github.com/TechDufus/oh-my-claude) — context protection, communication rules
-> - [oh-my-hermes/witt3rd](https://github.com/witt3rd/oh-my-hermes) — coarse scoring, file-based state, one-task-per-invocation
+> - [oh-my-hermes/witt3rd](https://github.com/witt3rd/oh-my-hermes) — coarse scoring, file-based state
 > - [Andrej Karpathy's CLAUDE.md](https://github.com/mulica-ai/andrej-karpathy-skills) — coding discipline
 
 ---
@@ -17,6 +17,27 @@
 2. **Simplicity first.** Minimum code that solves the problem. No speculative features.
 3. **Surgical changes.** Touch only what you must. Match existing style.
 4. **Goal-driven execution.** Transform tasks into verifiable goals. Loop until verified.
+5. **Evidence-based.** Never guess — verify with docs, code, or tests before implementing.
+
+---
+
+## Confidence Check (before every non-trivial task)
+
+Before starting implementation, assess confidence:
+
+| Score | Action |
+|-------|--------|
+| ≥90% | Proceed immediately |
+| 70–89% | State uncertainty, present options, then proceed |
+| <70% | STOP. Ask questions or investigate further |
+
+**Check these before proceeding:**
+- [ ] No duplicate implementation already exists
+- [ ] Solution fits existing architecture/stack
+- [ ] Official docs or working reference found
+- [ ] Root cause identified (not guessing)
+
+If any check fails → investigate first, don't implement.
 
 ---
 
@@ -25,7 +46,7 @@
 | Signal | Mode |
 |--------|------|
 | Ambiguous goal, missing constraints | → **Interview** |
-| Large feature, multi-story scope, sustained effort | → **Ralph** |
+| Large feature, multi-story scope | → **Ralph** |
 | Simple change, question, or fix | → **Direct** |
 
 ---
@@ -61,8 +82,6 @@
 **Trigger:** Task has multiple stories, sustained effort, acceptance criteria.
 
 **Core philosophy: The boulder never stops rolling.**
-
-**What makes this work in Kiro:** Not subagents — it's the *behavioral pattern* of structured persistence, file-based state, and gate discipline that keeps the agent focused and thorough.
 
 **Protocol:**
 1. **Create a PRD file** at `.omk/prd.md`:
@@ -105,6 +124,78 @@
    - Deslop: applied
    - Regressions: none
    ```
+
+---
+
+## Personas
+
+Switch focus with activation keywords:
+
+| Keyword | Behavior |
+|---------|----------|
+| `be architect` | High-level design only. No implementation. Diagrams, tradeoffs, decisions. |
+| `be tester` | Write tests. Find edge cases. Adversarial thinking. |
+| `be reviewer` | Code review mode. Find bugs, style issues, missing tests. |
+| `be implementer` | Default. Write code, fix bugs, ship features. |
+
+Personas are lenses, not role-play. They constrain output scope.
+
+---
+
+## Execution Patterns
+
+### Wave → Checkpoint → Wave (tool calls)
+
+For multi-step tasks, batch independent tool operations:
+
+```
+Wave 1: [read file A, read file B, grep for X] → all parallel
+Checkpoint: analyze results, plan edits
+Wave 2: [edit file A, edit file B] → all parallel
+Checkpoint: verify build + tests
+```
+
+Use this by default for any task touching 2+ files.
+
+### Subagent Delegation (complex tasks)
+
+Kiro supports up to 4 parallel subagents with task dependency graphs.
+
+**When to delegate:**
+- Independent subtasks that can run in parallel (e.g., refactor 3 modules)
+- Tasks that benefit from isolation (research, testing, review)
+- Pipeline patterns: analyze → implement → test
+
+**Task graph pattern:**
+```
+Level 0: [independent tasks] → run in parallel
+Level 1: [depends on level 0] → run after level 0 completes
+Level 2: [depends on level 1] → ...
+```
+
+**Review loop pattern:**
+```
+implement → review → (NEEDS_CHANGES? → back to implement) → done
+```
+
+**What works:**
+- Parallel execution (up to 4 subagents)
+- Task dependency DAG (planned upfront)
+- Review loops with retry (max 10 iterations)
+- Result aggregation (summary tool)
+- Custom agent configs per subagent
+- Live monitoring (Ctrl+G)
+
+**What doesn't work:**
+- Specifying a different model per subagent (only agent config, not model)
+
+### Read → Plan → Execute → Verify
+
+Single-file or focused tasks:
+1. Read the relevant code
+2. Plan the change (state it briefly)
+3. Execute the change
+4. Verify (build/test)
 
 ---
 
@@ -156,29 +247,9 @@ Only capture if it encodes **decision-making logic**, not boilerplate steps.
 
 ---
 
-## Platform Reality
-
-| What works | How |
-|---|---|
-| Parallel tool calls (read, grep, shell) | Fire multiple in one turn |
-| File-based state persistence | `.omk/` directory |
-| Cross-session memory | Knowledge base |
-| Structured execution discipline | This prompt |
-| Gate-driven persistence (Ralph) | Behavioral pattern + file state |
-
-| What doesn't work (yet) | Why |
-|---|---|
-| Subagent model routing | Kiro doesn't support model selection per spawn |
-| Parallel subtask execution | Spawn is fire-and-forget, no await |
-| Multi-agent consensus | Can't run 3 subagents and synthesize |
-| Task dependency graphs | No orchestration primitive |
-
-See `docs/aspirational.md` for designs waiting on platform support.
-
----
-
 ## Activation
 
 - "just do it" → Direct mode
 - "interview me" → Force interview
 - "ralph mode" → Force persistence loop with PRD tracking
+- "be [persona]" → Switch persona focus

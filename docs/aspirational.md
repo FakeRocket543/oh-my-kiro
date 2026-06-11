@@ -1,100 +1,43 @@
 # Aspirational — Features pending Kiro platform support
 
-> These patterns are valid designs but **cannot execute in Kiro CLI today**.
-> They require platform-level features (subagent model routing, task graphs, spawn callbacks).
-> Kept here for reference; re-integrate when Kiro supports them.
+> Only features that **cannot execute today**. Everything else has moved to KIRO.md.
 
 ---
 
-## Ultrawork: Multi-model subagent routing
+## Multi-model subagent routing
 
-**Requires:** Subagent model selection, spawn await/callback
+**Requires:** Model selection per subagent (not just agent config)
 
-**Subagent routing heuristic:**
-- Simple search/read tasks → `model: "claude-haiku-4.5"` (0.40x)
-- Code generation, standard implementation → `model: "claude-sonnet-4.6"` (1.30x)
-- Chinese text quality review, zh-TW naming → `model: "glm-5"` (0.50x)
-- Code review, bug finding → `model: "deepseek-3.2"` (0.25x)
-- Complex architecture, judgment calls → keep in main thread (opus 2.20x)
-- Throwaway scaffolding, boilerplate → `model: "qwen3-coder-next"` (0.05x)
+**Current state:** Kiro subagents use the agent config's model. You cannot specify a different model per spawn.
 
-**Multi-LLM review pattern (fire all in parallel):**
+**Desired:**
+- Route comprehension tasks → small/cheap model
+- Route standard implementation → mid-tier model
+- Route architecture decisions → strongest model
+- Route domain-specific review (e.g., zh-TW quality) → specialized model
+
+**Multi-LLM review pattern (desired, not yet possible):**
 ```
-Stage A (opus):    correctness + logic review
-Stage B (glm-5):  zh-TW quality + naming + cultural fit
-Stage C (deepseek): code bugs + edge cases
+Subagent A (strong model): correctness + logic review
+Subagent B (specialized): domain-specific quality check
+Subagent C (cheap model): mechanical bug finding
 → Main agent: synthesize consensus + flag disagreements
 ```
 
-**Cost-aware execution:**
-| Task Type | Model | Credits | Rationale |
-|-----------|-------|---------|-----------|
-| File read + summarize | haiku-4.5 | 0.40x | Comprehension only |
-| Boilerplate generation | qwen3-coder-next | 0.05x | Template work |
-| Standard implementation | sonnet-4.6 | 1.30x | Balance quality/cost |
-| Chinese proofreading | glm-5 | 0.50x | Native zh + frontier reasoning |
-| Code review + bug finding | glm-5 | 0.50x | SWE-bench #1 tier at 1/4 Opus cost |
-| Agentic multi-step tasks | glm-5 | 0.50x | Specifically tuned for tool-calling workflows |
-| Long-context analysis | glm-5 | 0.50x | 200K context, can ingest full codebases |
-| Architecture decision | opus-4.6 | 2.20x | Complex judgment calls |
-| Multi-file refactor | sonnet-4.6 | 1.30x | One subagent per file |
-| Cheap code generation | deepseek-3.2 | 0.25x | Good enough for scaffolding |
+---
+
+## Feature Request for Kiro
+
+- `spawn --model <name>` or model field in agent config that overrides the session model
+
+Relevant issue: [#2288](https://github.com/kirodotdev/Kiro/issues/2288)
 
 ---
 
-## Ultrawork: Parallel subagent task graph
+## Already implemented (moved to KIRO.md)
 
-**Requires:** Spawn with await, subagent dependency coordination
-
-**Execution pattern:**
-```
-1. Decompose task into subtasks
-2. Identify dependencies (A→B means B needs A's output)
-3. Group into levels:
-   Level 0: [independent tasks] → fire in parallel
-   Level 1: [tasks depending on level 0] → fire after level 0 completes
-   Level N: ...
-4. Execute each level, verify after each
-5. Final verification: build + test + lint
-```
-
----
-
-## Consensus Planning via parallel subagents
-
-**Requires:** Multiple subagents with different roles running simultaneously, results synthesis
-
-1. **Planner perspective** (via subagent): Propose implementation plan
-2. **Architect perspective** (via subagent): Review for technical soundness
-3. **Critic perspective** (via subagent): Challenge assumptions, find gaps
-
----
-
-## Agent Roles (subagent delegation)
-
-**Requires:** Subagent spawn with await, role-specific prompts
-
-| Role | Job |
-|------|-----|
-| **Advisor** | Gap analysis, scope risks |
-| **Critic** | Review plans BEFORE execution |
-| **Validator** | Tests, linters, verification |
-| **Librarian** | Read large files, summarize |
-| **Security** | OWASP, secrets, injection audit |
-
----
-
-## Orchestrator Protocol
-
-**Requires:** Subagent coordination, spawn await
-
-- **Find** → subagent search → **Understand** → subagent read/summarize → **Plan** → consensus → **Execute** → parallel subagents → **Verify** → shell commands
-
----
-
-## Feature Requests for Kiro
-
-1. `spawn --model <model>` — specify model for spawned agent
-2. `spawn --await` — block until spawned agent completes, return result
-3. Task graph primitive — define dependencies between spawned tasks
-4. Subagent result forwarding — spawned agent output enters parent context
+These were previously aspirational but now work:
+- ~~Parallel subagent execution~~ → up to 4 concurrent
+- ~~Task dependency graphs~~ → DAG support built-in
+- ~~Spawn with await~~ → results auto-return via summary tool
+- ~~Review loops~~ → trigger-based retry with max iterations
