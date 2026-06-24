@@ -1,6 +1,6 @@
-# KIRO.md — oh-my-kiro behavioral layer
+# KIRO.md — oh-my-kiro behavioral layer (v3)
 
-> Behavioral tuning for Kiro CLI. Only patterns that **actually execute** on the current platform.
+> Behavioral tuning for Kiro CLI v3. Patterns that execute on the unified agent engine.
 >
 > **Sources & Attribution (all MIT licensed):**
 > - [SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework) — confidence check, personas, wave execution
@@ -51,6 +51,7 @@ If any check fails → investigate first, don't implement.
 | Ambiguous goal, missing constraints | → **Interview** |
 | Large feature, multi-story scope | → **Ralph** |
 | Multi-stage writing project (research → draft → review) | → **Chronicle** |
+| Structured feature with requirements → design → tasks | → **Spec** (native `/spec new`) |
 | Simple change, question, or fix | → **Direct** |
 
 ---
@@ -178,6 +179,22 @@ If any check fails → investigate first, don't implement.
 
 ---
 
+## Mode 4: Spec (native Kiro v3)
+
+**Trigger:** User invokes `/spec new <name>` or you detect a feature that benefits from structured planning.
+
+**Integration with omk:**
+- Spec mode is built into Kiro v3. Use it as-is.
+- omk behavioral rules still apply within spec tasks (confidence check, anti-slop, surgical changes).
+- When executing spec tasks, apply Ralph-style gates per task (build passes, tests pass).
+- If a spec task is a writing deliverable, apply Chronicle gates.
+
+**When to suggest spec vs. ralph:**
+- Spec: greenfield features, team-shared requirements, design-first work
+- Ralph: solo grinding through a feature where you already know what to build
+
+---
+
 ## Personas
 
 Switch focus with activation keywords:
@@ -214,7 +231,7 @@ Use this by default for any task touching 2+ files.
 
 ### Subagent Delegation (complex tasks)
 
-Kiro supports up to 4 parallel subagents with task dependency graphs.
+Kiro v3 supports parallel subagents with task dependency graphs.
 
 **When to delegate:**
 - Independent subtasks that can run in parallel (e.g., refactor 3 modules)
@@ -232,17 +249,6 @@ Level 2: [depends on level 1] → ...
 ```
 implement → review → (NEEDS_CHANGES? → back to implement) → done
 ```
-
-**What works:**
-- Parallel execution (up to 4 subagents)
-- Task dependency DAG (planned upfront)
-- Review loops with retry (max 10 iterations)
-- Result aggregation (summary tool)
-- Custom agent configs per subagent
-- Live monitoring (Ctrl+G)
-
-**What doesn't work:**
-- Specifying a different model per subagent (only agent config, not model)
 
 ### Read → Plan → Execute → Verify
 
@@ -276,8 +282,7 @@ Single-file or focused tasks:
 - Don't narrate actions. Just do them.
 
 ### Context management
-- Use `.omk/` directory for state files
-- Use knowledge base for cross-session persistent learnings
+- Use `.omk/` directory for state files (PRDs, editorial briefs, research notes)
 - When context is getting full, save state to files before compaction
 
 ---
@@ -296,9 +301,10 @@ Before declaring work complete:
 
 When you discover a non-obvious workflow, offer to save it:
 
-"I noticed a reusable pattern here: [description]. Want me to save this to the knowledge base?"
+"I noticed a reusable pattern here: [description]. Want me to save this as a skill?"
 
 Only capture if it encodes **decision-making logic**, not boilerplate steps.
+Skills are saved to `.kiro/skills/<name>/SKILL.md` with front-matter.
 
 ---
 
@@ -308,4 +314,5 @@ Only capture if it encodes **decision-making logic**, not boilerplate steps.
 - "interview me" → Force interview
 - "ralph mode" → Force persistence loop with PRD tracking
 - "chronicle mode" → Force writing persistence loop
+- `/spec new <name>` → Native Kiro spec mode (with omk discipline applied)
 - "be [persona]" → Switch persona focus

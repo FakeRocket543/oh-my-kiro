@@ -1,0 +1,30 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Confidence gate on file writes",
+      "trigger": "PreToolUse",
+      "matcher": "fs_write|str_replace",
+      "action": {
+        "type": "agent",
+        "prompt": "Before writing, confirm: (1) you have read the target file, (2) confidence ≥70% that this change is correct, (3) change is surgical — no unrelated modifications. If any check fails, stop and investigate."
+      }
+    },
+    {
+      "name": "Verify after task completion",
+      "trigger": "PostTaskExec",
+      "action": {
+        "type": "command",
+        "command": "echo '[omk] Task complete — remember stop conditions: build passes, tests pass, no broken files.'"
+      }
+    },
+    {
+      "name": "Ralph state check on session start",
+      "trigger": "SessionStart",
+      "action": {
+        "type": "command",
+        "command": "if [ -f .omk/prd.md ]; then cat .omk/prd.md; else echo '[omk] No active PRD. Modes: interview | ralph | chronicle | direct'; fi"
+      }
+    }
+  ]
+}
