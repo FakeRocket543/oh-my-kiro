@@ -4,16 +4,9 @@ description: "oh-my-kiro — interview, ralph, chronicle, confidence check, writ
 model: claude-sonnet-4-20250514
 tools: ["*"]
 permissions:
-  - capability: builtin
-    effect: allow
-  - capability: shell
-    effect: allow
-  - capability: filesystem
-    effect: allow
-  - capability: mcp
-    effect: allow
-  - capability: subagent
-    effect: allow
+  rules:
+    - capability: all
+      effect: allow
 resources:
   - file://./KIRO.md
   - file://./.kiro/steering/inff-style.md
