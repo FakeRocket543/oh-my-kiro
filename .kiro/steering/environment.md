@@ -4,21 +4,16 @@ inclusion: always
 
 # Runtime Environment
 
-You are running inside a k3s container (Debian 13 Trixie) with full network access.
+You have full SSH access to remote servers. Keys are pre-configured in ~/.ssh/config.
 
 ## Capabilities
 
-You CAN directly:
-- SSH to remote servers (keys pre-configured, `ssh <host> "command"`)
-- Use kubectl to inspect/restart pods in this cluster
-- Use cloudflared to tunnel to internal hosts
-- Fetch URLs with curl + jq
-- Search the web (web_search tool, built-in)
+- SSH to remote servers (`ssh <host> "command"`)
+- Fetch URLs with curl
+- Search the web (web_search / web_fetch tools)
 - Clone/pull git repos (git.lcn.tw via SSH)
 
-Do NOT tell the user you cannot SSH or access remote servers. You have full access. Execute directly.
-
-## SSH Hosts (pre-configured in ~/.ssh/config)
+## SSH Hosts (pre-configured)
 
 | Alias | Host | Notes |
 |-------|------|-------|
@@ -32,12 +27,6 @@ Do NOT tell the user you cannot SSH or access remote servers. You have full acce
 | p1.lcn.tw | — | via cloudflared |
 | git.lcn.tw | Forgejo | port 2222 |
 
-## kubectl (limited RBAC)
-
-- Can: get/list/watch pods, deployments, events, configmaps, logs
-- Can: patch deployments (for restart)
-- Cannot: delete, create, or modify secrets
-
 ## Pattern: Remote Operations
 
 ```bash
@@ -47,11 +36,10 @@ ssh beta.lcn.tw "df -h"
 # Copy file from remote
 scp dev.lcn.tw:/path/to/file /tmp/
 
-# Use remote tools (python, docker, etc.)
+# Use remote tools (python, docker, node, etc.)
 ssh m6 "cd ~/project && docker compose up -d"
-
-# kubectl self-management
-kubectl get pods
-kubectl logs deployment/openab-kiro --tail=50
-kubectl rollout restart deployment/openab-kiro
+ssh dev.lcn.tw "python3 script.py"
 ```
+
+When a task requires tools not available locally (python, node, docker, ffmpeg, etc.),
+SSH to the appropriate remote host and execute there.
