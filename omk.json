@@ -6,12 +6,8 @@
   "allowedTools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code", "web_search", "web_fetch", "knowledge", "use_aws", "subagent"],
   "resources": [
     "file://./KIRO.md",
-    "file://./.kiro/steering/inff-style.md",
-    "file://./.kiro/steering/environment.md",
-    "file://./.kiro/skills/deep-research/SKILL.md",
-    "file://./.kiro/skills/fact-check/SKILL.md",
-    "file://./.kiro/skills/translation/SKILL.md"
+    "file://./.kiro/steering/environment.md"
   ],
   "keyboardShortcut": "ctrl+shift+o",
-  "welcomeMessage": "omk ready. Modes: interview | ralph | chronicle | direct. Personas: architect | tester | reviewer | implementer | columnist | translator | editor | researcher"
+  "welcomeMessage": "omk v4 ready. Modes: interview | ralph | chronicle | direct. Personas: reviewer | columnist | translator"
 }

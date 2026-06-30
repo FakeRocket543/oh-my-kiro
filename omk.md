@@ -9,11 +9,8 @@ permissions:
       effect: allow
 resources:
   - file://./KIRO.md
-  - file://./.kiro/steering/inff-style.md
-  - file://./.kiro/skills/deep-research/SKILL.md
-  - file://./.kiro/skills/fact-check/SKILL.md
-  - file://./.kiro/skills/translation/SKILL.md
-welcomeMessage: "omk ready. Modes: interview | ralph | chronicle | direct. Personas: architect | tester | reviewer | implementer | columnist | translator | editor | researcher"
+  - file://./.kiro/steering/environment.md
+welcomeMessage: "omk v4 ready. Modes: interview | ralph | chronicle | direct. Personas: reviewer | columnist | translator"
 ---
 
 file://./KIRO.md

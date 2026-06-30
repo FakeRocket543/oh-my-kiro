@@ -4,28 +4,29 @@ Behavioral tuning layer for [Kiro CLI v3](https://kiro.dev/docs/cli/v3/). Makes 
 
 Requires **kiro-cli ≥ 2.9.0** (v3 engine via `--v3` flag or native v3 mode).
 
+## Design Philosophy (v4)
+
+**Slim core, on-demand everything else.** Only always-active rules live in `KIRO.md` (~100 lines). Modes, skills, and project-specific steering load only when triggered. This keeps token overhead minimal for simple tasks while retaining full power for complex workflows.
+
 ## Modes
 
-| Mode | When | What it does |
-|------|------|--------------|
-| **Direct** | Simple fix / question | Normal Kiro behavior with omk discipline |
-| **Interview** | Ambiguous request | One question per turn until spec is clear |
-| **Ralph** | Large feature, multi-story | PRD tracking, story gates, deslop pass |
-| **Chronicle** | Multi-stage writing project | Research → outline → draft → review → publish |
-| **Spec** | Structured feature dev | Native Kiro `/spec` with omk gates applied |
+| Mode | Trigger | File | When |
+|------|---------|------|------|
+| **Direct** | default | — | Simple fix, question, focused change |
+| **Interview** | `interview me` | `.kiro/modes/interview.md` | Ambiguous request, missing constraints |
+| **Ralph** | `ralph mode` | `.kiro/modes/ralph.md` | Large feature, multi-story scope |
+| **Chronicle** | `chronicle mode` | `.kiro/modes/chronicle.md` | Multi-stage writing project |
+| **Spec** | `/spec new <name>` | native Kiro v3 | Structured feature dev with requirements |
+
+Default is Direct. Auto-fallback: confidence <70% → ask one clarifying question.
 
 ## Personas
 
 | Keyword | Focus |
 |---------|-------|
-| `be architect` | Design only. Diagrams, tradeoffs, decisions. |
-| `be tester` | Write tests. Find edge cases. |
-| `be reviewer` | Code review. Bugs, style, missing tests. |
-| `be implementer` | Default. Write code, fix bugs, ship. |
-| `be columnist` | Feature writing. inff.cc style. Cold prose, no filler. |
-| `be translator` | Translation. Faithful, glossary-managed, flagged uncertainties. |
-| `be editor` | Proofreading. Line-by-line comparison, three-pass protocol. |
-| `be researcher` | Fact-finding. Source governance, citation registry, counter-review. |
+| `be reviewer` | Code review: bugs, style, missing tests, security |
+| `be columnist` | Feature writing: cold prose, no filler (load project style) |
+| `be translator` | Translation: faithful, glossary-managed, flag uncertainties |
 
 ## Skills (.kiro/skills/)
 
@@ -39,11 +40,13 @@ On-demand loaded skills for specific workflows:
 
 ## Steering (.kiro/steering/)
 
-Persistent context loaded into sessions:
+Persistent context loaded into every session:
 
 | File | Inclusion | Purpose |
 |------|-----------|---------|
-| [inff-style.md](.kiro/steering/inff-style.md) | manual | Editorial style rules for inff.cc feature writing |
+| [environment.md](.kiro/steering/environment.md) | always | SSH capabilities + host template |
+
+**Project-specific steering** (editorial style, domain rules) belongs in the project's own `.kiro/steering/`, not in omk. See `examples/` for reference.
 
 ## Hooks (.kiro/hooks/)
 
@@ -58,8 +61,8 @@ v3 hooks that enforce omk discipline automatically:
 ## Key Features
 
 - **Confidence check** — assess before acting, stop if <70% confident
-- **Spec integration** — native Kiro v3 `/spec` with omk behavioral gates
-- **Chronicle mode** — structured writing pipeline with editorial gates
+- **Ralph persistence** — PRD tracking, story gates, deslop pass, regression check
+- **Chronicle pipeline** — research → outline → draft → review → publish
 - **Source governance** — citation registry, independence analysis, counter-review
 - **Three-pass translation** — translate / proofread / polish with glossary
 - **Anti-slop rules** — no filler, no unnecessary abstractions
@@ -73,14 +76,15 @@ v3 hooks that enforce omk discipline automatically:
 ```bash
 git clone ssh://git@git.lcn.tw:2222/felix/oh-my-kiro.git ~/.kiro/oh-my-kiro
 ln -sf ~/.kiro/oh-my-kiro/omk.md ~/.kiro/agents/omk.md
-ln -sf ~/.kiro/oh-my-kiro/KIRO.md ~/.kiro/KIRO.md
+ln -sf ~/.kiro/oh-my-kiro/KIRO.md ~/.kiro/agents/KIRO.md
 ```
 
-Skills and steering (optional — for writing/research workflows):
+Skills, steering, and hooks:
 ```bash
 ln -sf ~/.kiro/oh-my-kiro/.kiro/skills/* ~/.kiro/skills/
 ln -sf ~/.kiro/oh-my-kiro/.kiro/steering/* ~/.kiro/steering/
 ln -sf ~/.kiro/oh-my-kiro/.kiro/hooks/* ~/.kiro/hooks/
+ln -sf ~/.kiro/oh-my-kiro/.kiro/modes/* ~/.kiro/modes/
 ```
 
 ### Per-project
@@ -90,6 +94,8 @@ Copy the `.kiro/` directory into your project:
 cp -r ~/.kiro/oh-my-kiro/.kiro/ /path/to/project/.kiro/
 cp ~/.kiro/oh-my-kiro/KIRO.md /path/to/project/.kiro/steering/omk.md
 ```
+
+Add project-specific editorial style or domain rules to the project's own `.kiro/steering/`. See `examples/inff-style.md` for a reference implementation.
 
 ### Verify
 
@@ -113,24 +119,27 @@ interview me        → Force interview
 ralph mode          → Force persistence loop
 chronicle mode      → Force writing pipeline
 /spec new <name>    → Native Kiro spec (omk discipline applied)
+be reviewer         → Code review persona
 be columnist        → Feature writing persona
 be translator       → Translation persona
-be editor           → Proofreading persona
-be researcher       → Fact-finding persona
 ```
 
 ## Structure
 
 ```
 oh-my-kiro/
-├── KIRO.md                              # Behavioral prompt (the brain)
+├── KIRO.md                              # Core behavioral prompt (~100 lines, always loaded)
 ├── omk.md                               # v3 agent config (markdown format)
-├── omk.json                             # Legacy v2 agent config (kept for compat)
+├── omk.json                             # Legacy v2 agent config (backwards compat)
 ├── .kiro/
 │   ├── hooks/
 │   │   └── omk.json                    # v3 hooks (confidence gate, verify, state)
+│   ├── modes/                           # On-demand mode definitions
+│   │   ├── ralph.md                    # Persistence loop protocol
+│   │   ├── interview.md                # Clarification protocol
+│   │   └── chronicle.md                # Writing pipeline protocol
 │   ├── steering/
-│   │   └── inff-style.md               # Editorial style rules
+│   │   └── environment.md              # Runtime environment (template, always loaded)
 │   └── skills/
 │       ├── deep-research/
 │       │   └── SKILL.md                # Investigative research protocol
@@ -138,17 +147,22 @@ oh-my-kiro/
 │       │   └── SKILL.md                # Claim verification workflow
 │       └── translation/
 │           └── SKILL.md                # Translation/proofread/polish
-└── LICENSE                              # MIT
+├── examples/                            # Project-specific reference implementations
+│   └── inff-style.md                   # Editorial style example (inff.cc)
+├── LICENSE                              # MIT
+└── README.md
 ```
 
-## Migration from v2
+## What Changed in v4
 
-If you were using `omk.json` (v2 format):
-
-1. The new `omk.md` replaces it as the primary agent config
-2. `omk.json` is kept for backwards compatibility with kiro-cli <2.9
-3. Update your symlink: `ln -sf ~/.kiro/oh-my-kiro/omk.md ~/.kiro/agents/omk.md`
-4. Copy hooks: `ln -sf ~/.kiro/oh-my-kiro/.kiro/hooks/* ~/.kiro/hooks/`
+| Change | Why |
+|--------|-----|
+| KIRO.md slimmed 350→~100 lines | Reduce token overhead for simple tasks |
+| Modes extracted to `.kiro/modes/` | On-demand loading instead of always-on |
+| Personas reduced 8→3 | Removed overlap with modes/skills; kept only distinct lenses |
+| inff-style.md → `examples/` | Project-specific content doesn't belong in framework |
+| environment.md → template | No infrastructure data in public repo |
+| Skills removed from resources | Already on-demand via `.kiro/skills/` trigger system |
 
 ## Attribution
 
