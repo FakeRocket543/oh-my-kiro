@@ -7,6 +7,7 @@
   "resources": [
     "file://./KIRO.md",
     "file://./.kiro/steering/inff-style.md",
+    "file://./.kiro/steering/environment.md",
     "file://./.kiro/skills/deep-research/SKILL.md",
     "file://./.kiro/skills/fact-check/SKILL.md",
     "file://./.kiro/skills/translation/SKILL.md"
